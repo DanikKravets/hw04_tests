@@ -107,7 +107,7 @@ class PaginatorViewsTest(TestCase):
 class PostPagesTests(TestCase):
     @classmethod
     def setUpClass(cls):
-        super().setUpClass
+        super().setUpClass()
 
         cls.user = User.objects.create_user(username='HasNoName')
 
@@ -155,7 +155,7 @@ class PostPagesTests(TestCase):
         """Post_edit использует корректный шаблон"""
         post_id = self.post.id
         response = self.authorized_client.get(reverse(
-            'posts:post_edit', kwargs={'post_id': post_id})
+            'posts:post_edit', kwargs={'post_id': f'{post_id}'})
         )
         self.assertTemplateUsed(response, 'posts/create_post.html')
 
