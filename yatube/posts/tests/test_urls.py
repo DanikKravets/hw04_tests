@@ -12,7 +12,6 @@ class PostURLTests(TestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass
-
         cls.user = User.objects.create_user(username='HasNoName')
 
         cls.group = Group.objects.create(
@@ -71,8 +70,8 @@ class PostURLTests(TestCase):
             f'/posts/{self.post.id}/': 'posts/post_detail.html',
             '/create/': 'posts/create_post.html',
             f'/posts/{self.post.id}/edit/': 'posts/create_post.html'}
-        for adress, template in templates_url_names.items():
-            with self.subTest(adress=adress):
-                response = self.authorized_client.get(adress)
-                error_name = f'Ошибка: {adress} ожидал шаблон {template}'
+        for address, template in templates_url_names.items():
+            with self.subTest(address=address):
+                response = self.authorized_client.get(address)
+                error_name = f'Ошибка: {address} ожидал шаблон {template}'
                 self.assertTemplateUsed(response, template, error_name)
