@@ -166,7 +166,7 @@ class PostPagesTests(TestCase):
         post_text_0 = {
             response.context['post'].text: 'Тестовый пост' * 50,
             response.context['post'].group: self.group,
-            response.context['post'].author: self.user.usernme,
+            response.context['post'].author: self.user.username,
         }
         for value, expected in post_text_0.items():
             self.assertEqual(post_text_0[value], expected)
