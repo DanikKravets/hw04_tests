@@ -18,7 +18,7 @@ class PostModelTest(TestCase):
         )
         cls.post = Post.objects.create(
             author=cls.user,
-            text='Тестовый пост' * 50,
+            text='33Тестовый пост' * 50,
         )
 
     def test_post_str(self):

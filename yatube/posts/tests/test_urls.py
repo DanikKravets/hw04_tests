@@ -2,7 +2,8 @@ from http import HTTPStatus
 
 from django.contrib.auth import get_user_model
 from django.test import Client, TestCase
-from posts.models import Group, Post
+
+from ..models import Group, Post
 
 User = get_user_model()
 
@@ -11,7 +12,7 @@ class PostURLTests(TestCase):
 
     @classmethod
     def setUpClass(cls):
-        super().setUpClass
+        super().setUpClass()
         cls.user = User.objects.create_user(username='HasNoName')
 
         cls.group = Group.objects.create(
@@ -22,7 +23,7 @@ class PostURLTests(TestCase):
 
         cls.post = Post.objects.create(
             author=cls.user,
-            text='Тестовый пост' * 50,
+            text='44Тестовый пост' * 50,
         )
 
     def setUp(self):

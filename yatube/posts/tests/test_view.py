@@ -1,5 +1,4 @@
 from django import forms
-from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.test import Client, TestCase
 from django.urls import reverse
@@ -7,6 +6,7 @@ from django.urls import reverse
 from ..models import Group, Post
 
 TEST_OF_POST = 13
+SHOULD_BE = 10
 User = get_user_model()
 
 
@@ -21,7 +21,6 @@ class PaginatorViewsTest(TestCase):
             slug='test_group',
         )
         bilk_post = []
-
         for i in range(TEST_OF_POST):
             bilk_post.append(Post.objects.create(
                 text=f'Test text {i}',
@@ -49,20 +48,21 @@ class PaginatorViewsTest(TestCase):
             count_posts2 = len(response2.context['page_obj'])
             error_name1 = (
                 f'Ошибка: {count_posts1} постов'
-                f' должно {settings.FIRST_OF_POSTS}'
+                f' должно {SHOULD_BE}'
             )
             error_name2 = (
                 f'Ошибка: {count_posts2} постов,'
-                f'должно {TEST_OF_POST - settings.FIRST_OF_POSTS}'
+                f'должно {TEST_OF_POST - SHOULD_BE}'
             )
+
             self.assertEqual(
                 count_posts1,
-                settings.FIRST_OF_POSTS,
+                SHOULD_BE,
                 error_name1
             )
             self.assertEqual(
                 count_posts2,
-                (TEST_OF_POST - settings.FIRST_OF_POSTS),
+                TEST_OF_POST - SHOULD_BE,
                 error_name2,
             )
 
@@ -86,20 +86,20 @@ class PaginatorViewsTest(TestCase):
             count_posts2 = len(response2.context['page_obj'])
             error_name1 = (
                 f'Ошибка: {count_posts1} постов'
-                f' должно {settings.FIRST_OF_POSTS}'
+                f' должно {SHOULD_BE}'
             )
             error_name2 = (
                 f'Ошибка: {count_posts2} постов,'
-                f'должно {TEST_OF_POST - settings.FIRST_OF_POSTS}'
+                f'должно {TEST_OF_POST - SHOULD_BE}'
             )
             self.assertEqual(
                 count_posts1,
-                settings.FIRST_OF_POSTS,
+                SHOULD_BE,
                 error_name1
             )
             self.assertEqual(
                 count_posts2,
-                (TEST_OF_POST - settings.FIRST_OF_POSTS),
+                TEST_OF_POST - SHOULD_BE,
                 error_name2,
             )
 
@@ -119,7 +119,7 @@ class PostPagesTests(TestCase):
 
         cls.post = Post.objects.create(
             author=cls.user,
-            text='Тестовый пост' * 50,
+            text='22Тестовый пост',
         )
 
     def setUp(self):
