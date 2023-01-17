@@ -1,0 +1,78 @@
+from http import HTTPStatus
+
+from django.contrib.auth import get_user_model
+from django.test import Client, TestCase
+from posts.models import Group, Post
+
+User = get_user_model()
+
+
+class PostURLTests(TestCase):
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass
+
+        cls.user = User.objects.create_user(username='HasNoName')
+
+        cls.group = Group.objects.create(
+            title='Тестовая группа',
+            slug='test-slug',
+            description='Тестовое описание',
+        )
+
+        cls.post = Post.objects.create(
+            author=cls.user,
+            text='Тестовый пост' * 50,
+        )
+
+    def setUp(self):
+        self.guest_client = Client()  # Неавторизованный пользователь
+        self.authorized_client = Client()  # второй клиент
+        self.authorized_client.force_login(self.user)  # Авторизуем пользовател
+
+    def test_post_pages_url(self):
+        """Проверка доступности адресов приложения posts"""
+        url_names = {
+            '/': HTTPStatus.OK.value,
+            f'/group/{self.group.slug}/': HTTPStatus.OK.value,
+            f'/profile/{self.user.username}/': HTTPStatus.OK.value,
+            f'/posts/{self.post.id}/': HTTPStatus.OK.value,
+            '/unexisting_page/': HTTPStatus.NOT_FOUND.value,
+            '/create/': HTTPStatus.FOUND.value,
+            f'/posts/{self.post.id}/edit': HTTPStatus.MOVED_PERMANENTLY.value,
+        }
+
+        for address, value in url_names.items():
+            with self.subTest(address=address):
+                response = self.guest_client.get(address)
+                self.assertEqual(response.status_code, value)
+
+    def test_urls_redirect_guest_client(self):
+        """Редирект неавторизованного пользователя"""
+        url1 = '/auth/login/?next=/create/'
+        url2 = f'/auth/login/?next=/posts/{self.post.id}/edit/'
+        pages = {'/create/': url1,
+                 f'/posts/{self.post.id}/edit/': url2}
+        for page, value in pages.items():
+            response = self.guest_client.get(page)
+            self.assertRedirects(response, value)
+
+    def test_post_create_url(self):
+        response = self.authorized_client.get('/create/')
+        self.assertEqual(response.status_code, HTTPStatus.OK.value)
+
+    def test_urls_uses_correct_template(self):
+        """URL-адрес использует соответствующий шаблон."""
+        templates_url_names: dict = {
+            '/': 'posts/index.html',
+            f'/group/{self.group.slug}/': 'posts/group_list.html',
+            f'/profile/{self.user.username}/': 'posts/profile.html',
+            f'/posts/{self.post.id}/': 'posts/post_detail.html',
+            '/create/': 'posts/create_post.html',
+            f'/posts/{self.post.id}/edit/': 'posts/create_post.html'}
+        for adress, template in templates_url_names.items():
+            with self.subTest(adress=adress):
+                response = self.authorized_client.get(adress)
+                error_name = f'Ошибка: {adress} ожидал шаблон {template}'
+                self.assertTemplateUsed(response, template, error_name)
