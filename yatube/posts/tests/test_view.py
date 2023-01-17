@@ -152,9 +152,10 @@ class PostPagesTests(TestCase):
                 self.assertTemplateUsed(response, template)
 
     def test_post_edit_use_correct_template(self):
+        """Post_edit использует корректный шаблон"""
         post_id = self.post.id
         response = self.authorized_client.get(reverse(
-            'posts:post_edit', kwargs={'post_id': f'{post_id}'})
+            'posts:post_edit', kwargs={'post_id': post_id})
         )
         self.assertTemplateUsed(response, 'posts/create_post.html')
 
