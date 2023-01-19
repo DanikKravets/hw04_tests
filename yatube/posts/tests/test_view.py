@@ -254,9 +254,16 @@ class PostPagesTests(TestCase):
         post_text_0 = first_object.text
         post_group_0 = first_object.group
         post_author_0 = first_object.author
-        self.assertEqual(post_text_0, self.post.text)
-        self.assertEqual(post_group_0, self.post.group)
-        self.assertEqual(post_author_0, self.post.author)
+
+        page_obj = {
+            post_text_0: self.post.text,
+            post_group_0: self.post.group,
+            post_author_0: self.post.author,
+        }
+
+        for post_0, expected in page_obj.items():
+            self.assertEqual(post_0, expected)
+
         self.assertEqual(response.context.get('title'), 'Main page')
         self.assertEqual(
             response.context.get('text'),
@@ -276,9 +283,16 @@ class PostPagesTests(TestCase):
         post_text_0 = first_object.text
         post_group_0 = first_object.group
         post_author_0 = first_object.author
-        self.assertEqual(post_text_0, self.post.text)
-        self.assertEqual(post_group_0, self.post.group)
-        self.assertEqual(post_author_0, self.post.author)
+
+        page_obj = {
+            post_text_0: self.post.text,
+            post_group_0: self.post.group,
+            post_author_0: self.post.author,
+        }
+
+        for post_0, expected in page_obj.items():
+            self.assertEqual(post_0, expected)
+
         self.assertEqual(response.context.get('title'), 'Сообщества')
         self.assertEqual(
             response.context.get('group').title,
@@ -323,9 +337,14 @@ class PostPagesTests(TestCase):
         post_text_0 = first_object.text
         post_group_0 = first_object.group
         post_author_0 = first_object.author
-        self.assertEqual(post_text_0, self.post.text)
-        self.assertEqual(post_group_0, self.post.group)
-        self.assertEqual(post_author_0, self.post.author)
+
+        page_obj = {
+            post_text_0: self.post.text,
+            post_group_0: self.post.group,
+            post_author_0: self.post.author,
+        }
+        for post_0, expected in page_obj.items():
+            self.assertEqual(post_0, expected)
 
         self.assertEqual(
             response.context.get('title'),
