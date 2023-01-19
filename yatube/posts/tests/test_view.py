@@ -120,6 +120,7 @@ class PostPagesTests(TestCase):
         cls.post = Post.objects.create(
             author=cls.user,
             text='22Тестовый пост',
+            group=cls.group,
         )
 
     def setUp(self):
@@ -165,7 +166,7 @@ class PostPagesTests(TestCase):
             reverse('posts:post_detail', kwargs={'post_id': self.post.id})
         )
         post_text_0 = {
-            response.context['post'].text: '22Тестовый пост',
+            response.context['post'].text: self.post.text,
             response.context['post'].group: self.group,
             response.context['post'].author: self.user.username,
         }
@@ -248,6 +249,14 @@ class PostPagesTests(TestCase):
     def test_main_page_uses_correct_context(self):
         """Главная страница использует правильный контекст"""
         response = self.guest_client.get(reverse('posts:main_page'))
+        first_object = response.context['page_obj'][0]
+
+        post_text_0 = first_object.text
+        post_group_0 = first_object.group
+        post_author_0 = first_object.author
+        self.assertEqual(post_text_0, self.post.text)
+        self.assertEqual(post_group_0, self.post.group)
+        self.assertEqual(post_author_0, self.post.author)
         self.assertEqual(response.context.get('title'), 'Main page')
         self.assertEqual(
             response.context.get('text'),
@@ -261,6 +270,15 @@ class PostPagesTests(TestCase):
                 'posts:posts_by_groups', kwargs={'slug': f'{self.group.slug}'}
             )
         )
+
+        first_object = response.context['page_obj'][0]
+
+        post_text_0 = first_object.text
+        post_group_0 = first_object.group
+        post_author_0 = first_object.author
+        self.assertEqual(post_text_0, self.post.text)
+        self.assertEqual(post_group_0, self.post.group)
+        self.assertEqual(post_author_0, self.post.author)
         self.assertEqual(response.context.get('title'), 'Сообщества')
         self.assertEqual(
             response.context.get('group').title,
@@ -290,3 +308,28 @@ class PostPagesTests(TestCase):
         self.assertEqual(response.context.get('title'), 'Редактировать пост')
         self.assertEqual(response.context.get('is_edit'), True)
         self.assertEqual(response.context.get('post_id'), post_id)
+
+    def test_profile_page_uses_correct_context(self):
+        """В страницу профиля пользователя передан правильный контекст"""
+        post_list = self.user.posts.all()
+        posts_count = post_list.count()
+        response = self.authorized_client.get(
+            reverse(
+                'posts:profile', kwargs={'username': f'{self.user.username}'}
+            )
+        )
+        first_object = response.context['page_obj'][0]
+
+        post_text_0 = first_object.text
+        post_group_0 = first_object.group
+        post_author_0 = first_object.author
+        self.assertEqual(post_text_0, self.post.text)
+        self.assertEqual(post_group_0, self.post.group)
+        self.assertEqual(post_author_0, self.post.author)
+
+        self.assertEqual(
+            response.context.get('title'),
+            f'Профайл пользователя {self.user.username}'
+        )
+        self.assertEqual(response.context.get('posts_count'), posts_count)
+        self.assertEqual(response.context.get('author'), self.user)

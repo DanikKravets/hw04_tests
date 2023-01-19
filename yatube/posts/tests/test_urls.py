@@ -70,7 +70,9 @@ class PostURLTests(TestCase):
             f'/profile/{self.user.username}/': 'posts/profile.html',
             f'/posts/{self.post.id}/': 'posts/post_detail.html',
             '/create/': 'posts/create_post.html',
-            f'/posts/{self.post.id}/edit/': 'posts/create_post.html'}
+            f'/posts/{self.post.id}/edit/': 'posts/create_post.html',
+            '/unexisting_page/': 'core/404.html'
+        }
         for address, template in templates_url_names.items():
             with self.subTest(address=address):
                 response = self.authorized_client.get(address)
