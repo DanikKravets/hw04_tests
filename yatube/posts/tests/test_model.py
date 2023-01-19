@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 
@@ -24,11 +25,11 @@ class PostModelTest(TestCase):
     def test_post_str(self):
         """Проверяем, что у модели Post корректно работает __str__."""
         post = PostModelTest.post
-        expected_post__str__ = post.text[:15]
-        self.assertEqual(expected_post__str__, str(post))
+        expected_post_title = post.text[:settings.AMOUNT_TITLE]
+        self.assertEqual(expected_post_title, str(post))
 
     def test_group_str(self):
         """Проверяем, что у модели Group корректно работает __str__."""
         group = PostModelTest.group
-        expected_group__str__ = group.title
-        self.assertEqual(expected_group__str__, str(group))
+        expected_group_title = group.title
+        self.assertEqual(expected_group_title, str(group))

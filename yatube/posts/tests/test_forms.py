@@ -39,8 +39,8 @@ class PostFormTests(TestCase):
         error1 = 'Данные поста не совпадают'
         self.assertEqual(response.status_code, HTTPStatus.OK)
         self.assertTrue(Post.objects.filter(
-            text='New post text into form',
-            group=self.group.id,
+            text=form_data['text'],
+            group=form_data['group'],
             author=self.user
         ).exists(), error1)
 
@@ -54,6 +54,7 @@ class PostFormTests(TestCase):
             author=self.user,
             group=self.group,
         )
+        posts_count = Post.objects.count()
 
         post_v1 = self.post
 
@@ -81,8 +82,8 @@ class PostFormTests(TestCase):
         error1 = 'Данные обновленного поста не совпадают'
 
         self.assertTrue(Post.objects.filter(
-            text='New test text',
-            group=self.group2.id,
+            text=form_data['text'],
+            group=form_data['group'],
             author=self.user,
             pub_date=self.post.pub_date,
         ).exists(), error1)
@@ -91,6 +92,8 @@ class PostFormTests(TestCase):
         self.assertNotEqual(post_v1.text, form_data['text'], error1)
         error2 = 'Пользователь не может изменить группу поста'
         self.assertNotEqual(post_v1.group, form_data['group'], error2)
+        error2 = 'При редактировании поста создались еще посты'
+        self.assertEqual(Post.objects.count(), posts_count, error2)
 
     def test_group_null(self):
         """Проверка возможности не указывать группу"""

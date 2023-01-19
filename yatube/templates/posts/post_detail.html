@@ -3,7 +3,7 @@
     <!-- Язык сайта - русский -->
     {% extends 'base.html' %}
     {% block title %}
-        {{ post_text|truncatechars:30 }}
+        {{ post.text|truncatechars:30 }}
     {% endblock title %}
     {% block content %}
         <!-- класс py-5 создает отступы сверху и снизу блока -->
@@ -29,7 +29,7 @@
                 </ul>
             </aside>
             <article class="col-12 col-md-9">
-                <p>{{ post_text }}</p>
+                <p>{{ post.text }}</p>
             </article>
         </div>
     {% endblock content %}

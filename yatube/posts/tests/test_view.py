@@ -165,7 +165,7 @@ class PostPagesTests(TestCase):
             reverse('posts:post_detail', kwargs={'post_id': self.post.id})
         )
         post_text_0 = {
-            response.context['post'].text: 'Тестовый пост' * 50,
+            response.context['post'].text: '22Тестовый пост',
             response.context['post'].group: self.group,
             response.context['post'].author: self.user.username,
         }
@@ -185,6 +185,8 @@ class PostPagesTests(TestCase):
             with self.subTest(value=value):
                 form_field = response.context.get('form').fields.get(value)
                 self.assertIsInstance(form_field, expected)
+
+        self.assertEqual(response.context.get('title'), 'Новый пост')
 
     def test_post_added_correctly(self):
         """Пост при создании добавлен корректно"""
@@ -242,3 +244,50 @@ class PostPagesTests(TestCase):
             after_posts_count, before_posts_count, 'поста нет в другой группе',
         )
         self.assertNotIn(post, profile, 'поста нет в профиле другого юзера')
+
+    def test_main_page_uses_correct_context(self):
+        """Главная страница использует правильный контекст"""
+        response = self.guest_client.get(reverse('posts:main_page'))
+        self.assertEqual(response.context.get('title'), 'Main page')
+        self.assertEqual(
+            response.context.get('text'),
+            'Это главная страница проекта Yatube'
+        )
+
+    def test_group_page_uses_correct_context(self):
+        """Страница постов по группам использует правильный контекст"""
+        response = self.guest_client.get(
+            reverse(
+                'posts:posts_by_groups', kwargs={'slug': f'{self.group.slug}'}
+            )
+        )
+        self.assertEqual(response.context.get('title'), 'Сообщества')
+        self.assertEqual(
+            response.context.get('group').title,
+            self.group.title,
+        )
+        self.assertEqual(
+            response.context.get('group').description,
+            self.group.description,
+        )
+
+    def test_post_edit_page_uses_correct_context(self):
+        """Страница редактирования поста использует корректный контекст"""
+        post_id = self.post.id
+        response = self.authorized_client.get(reverse(
+            'posts:post_edit', kwargs={'post_id': f'{post_id}'})
+        )
+
+        form_fields = {
+            'text': forms.fields.CharField,
+            'group': forms.fields.ChoiceField,
+        }
+        for value, expected in form_fields.items():
+            with self.subTest(value=value):
+                form_field = response.context.get('form').fields.get(value)
+                self.assertIsInstance(form_field, expected)
+
+        self.assertEqual(response.context.get('title'), 'Редактировать пост')
+        self.assertEqual(response.context.get('is_edit'), True)
+        self.assertEqual(response.context.get('post_id'), post_id)
+

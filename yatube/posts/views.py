@@ -19,7 +19,6 @@ def index(request):
 
     context = {
         'text': text,
-        'posts': post_list,
         'title': title,
         'page_obj': paginator(request, post_list, AMOUNT),
     }
@@ -59,7 +58,6 @@ def post_detail(request, post_id):
     template = 'posts/post_detail.html'
     post = get_object_or_404(Post, pk=post_id)
     context = {
-        'post_text': post.text,
         'post': post,
     }
     return render(request, template, context)
