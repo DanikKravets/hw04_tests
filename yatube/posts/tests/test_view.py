@@ -290,4 +290,3 @@ class PostPagesTests(TestCase):
         self.assertEqual(response.context.get('title'), 'Редактировать пост')
         self.assertEqual(response.context.get('is_edit'), True)
         self.assertEqual(response.context.get('post_id'), post_id)
-
